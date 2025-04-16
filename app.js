@@ -10,16 +10,19 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const fs = require("fs");
-// const { errors } = require("celebrate");
+const { errors } = require("celebrate");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
+const errorHandler = require("./utils/errorHandler");
+const mainRouter = require("./routes/index");
 
 app.use(cors());
 
-// mongoose
-//   .connect("mongodb://127.0.0.1:27017/wtwr_db")
-//   .then(() => {
-//     console.log("connected to mongoDB");
-//   })
-//   .catch(console.error);
+mongoose
+  .connect("mongodb://127.0.0.1:27017/cc_db")
+  .then(() => {
+    console.log("connected to mongoDB");
+  })
+  .catch(console.error);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
@@ -29,15 +32,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Endpoint to process image and send to GPT-4 Vision
-app.post("/", upload.single("image"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No image uploaded" });
-  }
+app.post("/generate", upload.single("image"), async (req, res) => {
+  // if (!req.file) {
+  //   return res.status(400).json({ error: "No image uploaded" });
+  // }
+  const { imageUrl } = req.body;
 
+  if (!imageUrl) {
+    return res.status(400).json({ error: "No image URL provided" });
+  }
   try {
-    const imagePath = req.file.path;
-    const imageBuffer = fs.readFileSync(imagePath);
-    const base64Image = imageBuffer.toString("base64");
+    // const imagePath = req.file.path;
+    // const imageBuffer = fs.readFileSync(imagePath);
+    // const base64Image = imageBuffer.toString("base64");
 
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
@@ -53,7 +60,7 @@ app.post("/", upload.single("image"), async (req, res) => {
             content: [
               {
                 type: "image_url",
-                image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+                image_url: { url: imageUrl },
               },
             ],
           },
@@ -70,7 +77,7 @@ app.post("/", upload.single("image"), async (req, res) => {
     );
 
     res.json(response.data);
-    console.log(response);
+    console.log(response.data);
   } catch (error) {
     console.error(
       "Error:",
@@ -79,3 +86,10 @@ app.post("/", upload.single("image"), async (req, res) => {
     res.status(500).json({ error: "Error processing the image" });
   }
 });
+
+app.use(requestLogger);
+app.use("/", mainRouter);
+
+app.use(errorLogger);
+app.use(errors());
+app.use(errorHandler);
