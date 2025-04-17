@@ -91,7 +91,7 @@ const validateLoginUser = celebrate({
 
 const validateGetCaptionedImage = celebrate({
   params: Joi.object().keys({
-    itemdId: Joi.string().required(),
+    captionId: Joi.string().required(),
   }),
 });
 

@@ -23,9 +23,10 @@ const getCaptionedImage = (req, res, next) => {
 
 const createCaptionedImage = (req, res, next) => {
   const { caption, imageUrl } = req.body;
+  const owner = req.user?._id || null;
 
   captionedImage
-    .create({ caption, imageUrl })
+    .create({ caption, imageUrl, owner })
     .then((data) => res.status(201).send(data))
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -38,10 +39,10 @@ const createCaptionedImage = (req, res, next) => {
 };
 
 const deleteCaptionedImage = (req, res, next) => {
-  const { itemId } = req.params;
+  const { captionId } = req.params;
 
   captionedImage
-    .findById(itemId)
+    .findById(captionId)
     .orFail(() => new NotFoundError("Captioned image not found"))
     .then((caption) => {
       if (caption.owner.toString() !== req.user._id) {
@@ -51,7 +52,7 @@ const deleteCaptionedImage = (req, res, next) => {
           )
         );
       }
-      return captionedImage.findByIdAndDelete(itemId);
+      return captionedImage.findByIdAndDelete(captionId);
     })
     .then(() => res.send({ message: "successfully deleted captioned image" }))
     .catch(next);
@@ -60,11 +61,11 @@ const deleteCaptionedImage = (req, res, next) => {
 const likeCaption = (req, res, next) => {
   captionedImage
     .findByIdAndUpdate(
-      req.params.itemId,
+      req.params.captionId,
       { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
       { new: true }
     )
-    .orFail(() => new NotFoundError("Clothing item not found"))
+    .orFail(() => new NotFoundError("Captioned image not found"))
     .then((caption) => res.send(caption))
     .catch(next);
 };
@@ -72,11 +73,11 @@ const likeCaption = (req, res, next) => {
 const dislikeCaption = (req, res, next) => {
   captionedImage
     .findByIdAndUpdate(
-      req.params.itemId,
+      req.params.captionId,
       { $pull: { likes: req.user._id } }, // remove _id from the array
       { new: true }
     )
-    .orFail(() => new NotFoundError("Clothing item not found"))
+    .orFail(() => new NotFoundError("Captioned image not found"))
     .then((caption) => res.send(caption))
     .catch(next);
 };

@@ -18,29 +18,34 @@ const {
 captionedImageRouter.get("/", getCaptionedImages);
 
 captionedImageRouter.get(
-  "/:itemId",
+  "/:captionId",
   validateGetCaptionedImage,
   getCaptionedImage
 );
 
-captionedImageRouter.post("/", createCaptionedImage);
+captionedImageRouter.post(
+  "/",
+  auth,
+  validateCreateCaptionedImage,
+  createCaptionedImage
+);
 
 captionedImageRouter.delete(
-  "/:itemId",
+  "/:captionId",
   auth,
   validateGetCaptionedImage,
   deleteCaptionedImage
 );
 
 captionedImageRouter.put(
-  "/:itemId/likes",
+  "/:captionId/likes",
   auth,
   validateGetCaptionedImage,
   likeCaption
 );
 
 captionedImageRouter.delete(
-  "/:itemId/likes",
+  "/:captionId/likes",
   auth,
   validateGetCaptionedImage,
   dislikeCaption
