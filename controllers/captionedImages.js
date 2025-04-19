@@ -23,7 +23,7 @@ const getCaptionedImage = (req, res, next) => {
 
 const createCaptionedImage = (req, res, next) => {
   const { caption, imageUrl } = req.body;
-  const owner = req.user?._id || null;
+  const owner = req.user;
 
   captionedImage
     .create({ caption, imageUrl, owner })

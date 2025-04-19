@@ -31,6 +31,10 @@ const validateUpdateUserProfile = celebrate({
 
 const validateCreateCaptionedImage = celebrate({
   body: Joi.object().keys({
+    caption: Joi.string().required().min(2).messages({
+      "string.min": 'The minimum length of the "caption" field is 2',
+      "string.empty": 'The "caption" field must be filled in',
+    }),
     imageUrl: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "imageUrl" field must be filled in',
       "string.uri": 'the "imageUrl" field must be a valid url',

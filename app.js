@@ -32,20 +32,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Endpoint to process image and send to GPT-4 Vision
-app.post("/generate", upload.single("image"), async (req, res) => {
-  // if (!req.file) {
-  //   return res.status(400).json({ error: "No image uploaded" });
-  // }
+app.post("/generate", async (req, res) => {
   const { imageUrl } = req.body;
 
   if (!imageUrl) {
     return res.status(400).json({ error: "No image URL provided" });
   }
   try {
-    // const imagePath = req.file.path;
-    // const imageBuffer = fs.readFileSync(imagePath);
-    // const base64Image = imageBuffer.toString("base64");
-
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -53,7 +46,8 @@ app.post("/generate", upload.single("image"), async (req, res) => {
         messages: [
           {
             role: "system",
-            content: "Describe the image.",
+            content:
+              "You are a poetic scene narrator for someone with visual impairment. Describe images using sensory language, mood, and feeling — avoiding visual phrasing like 'you see' or 'this picture shows.' Focus on sound, texture, motion, temperature, and emotion.",
           },
           {
             role: "user",
@@ -77,7 +71,6 @@ app.post("/generate", upload.single("image"), async (req, res) => {
     );
 
     res.json(response.data);
-    console.log(response.data);
   } catch (error) {
     console.error(
       "Error:",
