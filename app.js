@@ -1,19 +1,24 @@
 const express = require("express");
+
 const mongoose = require("mongoose");
+
 const cors = require("cors");
-const app = express();
+
+const axios = require("axios");
+
 require("dotenv").config();
+
+const app = express();
+
 const { PORT = 3001 } = process.env;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_PROJECT_ID = process.env.OPENAI_PROJECT_ID;
-const axios = require("axios");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
-const fs = require("fs");
+
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const errorHandler = require("./utils/errorHandler");
 const mainRouter = require("./routes/index");
+const { BadRequestError } = require("./utils/errors/BadRequestError");
 
 app.use(cors());
 
@@ -32,11 +37,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Endpoint to process image and send to GPT-4 Vision
-app.post("/generate", async (req, res) => {
+app.post("/generate", async (req, res, next) => {
   const { imageUrl } = req.body;
 
   if (!imageUrl) {
-    return res.status(400).json({ error: "No image URL provided" });
+    return next(
+      new BadRequestError("Invalid data for creating a captioned image")
+    );
   }
   try {
     const response = await axios.post(
@@ -72,10 +79,7 @@ app.post("/generate", async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
-    console.error(
-      "Error:",
-      error.response ? error.response.data : error.message
-    );
+    console.error;
     res.status(500).json({ error: "Error processing the image" });
   }
 });
