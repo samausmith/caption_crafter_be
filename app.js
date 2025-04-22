@@ -36,6 +36,12 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+console.log("ENV:", {
+  NODE_ENV: process.env.NODE_ENV,
+  OPENAI_API_KEY: !!OPENAI_API_KEY,
+  OPENAI_PROJECT_ID: OPENAI_PROJECT_ID,
+});
+
 // Endpoint to process image and send to GPT-4 Vision
 app.post("/generate", async (req, res, next) => {
   const { imageUrl } = req.body;
