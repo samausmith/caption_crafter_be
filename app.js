@@ -79,7 +79,7 @@ app.post("/generate", async (req, res, next) => {
 
     res.json(response.data);
   } catch (error) {
-    console.error;
+    console.error(error);
     res.status(500).json({ error: "Error processing the image" });
   }
 });
