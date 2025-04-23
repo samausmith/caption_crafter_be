@@ -7,7 +7,6 @@ const { NotFoundError } = require("../utils/errors/NotFoundError");
 const getCaptionedImages = (req, res, next) => {
   captionedImage
     .find({})
-    .orFail(() => new NotFoundError("Captioned images cannot found"))
     .then((captions) => res.status(200).send(captions))
     .catch(next);
 };

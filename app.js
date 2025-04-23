@@ -21,6 +21,7 @@ const mainRouter = require("./routes/index");
 const { BadRequestError } = require("./utils/errors/BadRequestError");
 
 app.use(cors());
+app.use(requestLogger);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/cc_db")
@@ -35,12 +36,6 @@ app.listen(PORT, () => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-console.log("ENV:", {
-  NODE_ENV: process.env.NODE_ENV,
-  OPENAI_API_KEY: !!OPENAI_API_KEY,
-  OPENAI_PROJECT_ID: OPENAI_PROJECT_ID,
-});
 
 // Endpoint to process image and send to GPT-4 Vision
 app.post("/generate", async (req, res, next) => {
@@ -90,7 +85,6 @@ app.post("/generate", async (req, res, next) => {
   }
 });
 
-app.use(requestLogger);
 app.use("/", mainRouter);
 
 app.use(errorLogger);
