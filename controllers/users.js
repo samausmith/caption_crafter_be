@@ -57,16 +57,13 @@ module.exports.createUser = (req, res, next) => {
 module.exports.loginUser = (req, res, next) => {
   const { email, password } = req.body;
 
-  console.log("Email:", email);
-  console.log("Password:", password);
-
   if (!email || !password) {
     return next(new BadRequestError("Email and password are required"));
   }
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      console.log("User:", user);
+      console.log("[JWT_SECRET]", JWT_SECRET);
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
