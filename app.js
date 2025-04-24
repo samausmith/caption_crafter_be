@@ -20,17 +20,7 @@ const errorHandler = require("./utils/errorHandler");
 const mainRouter = require("./routes/index");
 const { BadRequestError } = require("./utils/errors/BadRequestError");
 
-const allowedOrigins = [
-  "https://www.caption-crafter.crabdance.com",
-  "http://localhost:3000", // For local development
-];
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true, // If using cookies or auth headers
-  })
-);
+app.use(cors());
 
 app.use(requestLogger);
 
