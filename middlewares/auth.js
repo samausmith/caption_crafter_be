@@ -16,9 +16,7 @@ module.exports = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, JWT_SECRET);
-    console.log("Decoded token payload:", payload);
   } catch (err) {
-    console.error("JWT verification failed:", err.message);
     return next(new UnauthorizedError("Invalid or expired token"));
   }
 
