@@ -44,18 +44,27 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
   password
 ) {
+  console.log("Find User Email:", email);
   return this.findOne({ email })
     .select("+password")
     .then((user) => {
       if (!user) {
+        console.log("Not Found User Email:", email);
         return Promise.reject(error);
       }
 
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
+          console.log(
+            "Passwords do not match",
+            "pass1:",
+            password,
+            "userpass:",
+            user.password
+          );
           return Promise.reject(error);
         }
-
+        console.log("passwords match lulz");
         return user;
       });
     });
