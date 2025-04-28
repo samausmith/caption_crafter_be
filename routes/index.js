@@ -3,6 +3,7 @@ const userRouters = require("./users");
 const captionedImageRouters = require("./captionedImages");
 const { NotFoundError } = require("../utils/errors/NotFoundError");
 const { loginUser, createUser } = require("../controllers/users");
+const { generateCaption } = require("../controllers/generateCaption");
 const auth = require("../middlewares/auth");
 const {
   validateLoginUser,
@@ -13,6 +14,7 @@ router.use("/users", auth, userRouters);
 router.use("/captions", captionedImageRouters);
 router.post("/signin", validateLoginUser, loginUser);
 router.post("/signup", validateCreateUser, createUser);
+router.post("/generate", generateCaption);
 
 router.use((req, res, next) => {
   next(new NotFoundError("The requested resource was not found"));

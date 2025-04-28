@@ -38,54 +38,6 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Endpoint to process image and send to GPT-4 Vision
-app.post("/generate", async (req, res, next) => {
-  const { imageUrl } = req.body;
-
-  if (!imageUrl) {
-    return next(
-      new BadRequestError("Invalid data for creating a captioned image")
-    );
-  }
-  try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a poetic scene narrator for someone with visual impairment. Describe images using sensory language, mood, and feeling — avoiding visual phrasing like 'you see' or 'this picture shows.' Focus on sound, texture, motion, temperature, and emotion.",
-          },
-          {
-            role: "user",
-            content: [
-              {
-                type: "image_url",
-                image_url: { url: imageUrl },
-              },
-            ],
-          },
-        ],
-        max_tokens: 500,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          "OpenAI-Project": OPENAI_PROJECT_ID,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error processing the image" });
-  }
-});
-
 app.use("/", mainRouter);
 
 app.use(errorLogger);
