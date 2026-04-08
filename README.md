@@ -22,5 +22,5 @@ This is the Express.js backend for the Caption Crafter app. It handles user auth
 
 ## Deployment
 
-- [Domain] (https://www.caption-crafter.crabdance.com/)
+- [Domain] (https://www.caption-crafter.uk/)
 - [Frontend](https://samausmith.github.io/caption_crafter_fe/)

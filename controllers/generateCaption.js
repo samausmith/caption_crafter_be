@@ -1,5 +1,6 @@
 const fetch = require("node-fetch");
 const { BadRequestError } = require("../utils/errors/BadRequestError");
+require("dotenv").config();
 
 const generateCaption = async (req, res, next) => {
   const { imageUrl } = req.body;
